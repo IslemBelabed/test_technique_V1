@@ -46,9 +46,10 @@ features['absences_rate'] = features['absences'].apply(calculate_absences_rate)
 # Bring all values to the lowest commun multiple of 4 and 5 which is 20 (as all values used are on scales from 0 to 4 or 5)
 # Assign coefficients to balance the equation and then devide by the number of coifficients (17)
 # Divide by 2 to get the complexity score on a scale from 0 to 10 
-features['complexity_score'] = ((features['traveltime'] * 5 - features['studytime'] * 5 + features['failures'] * 5 - (features['famrel'] * 5) + 
-                           (features['Dalc'] * 4) * 4 + (features['Walc'] * 4) * 3 + features['health'] * 3 + 
-                           (features['absences_rate'] * 4) * 2 - features['existant_support'] * 4) / 17) / 2
+# Equation was updated on 19/07 as there was an initial mistake regarding the parenthesis
+features['complexity_score'] = ((features['traveltime'] * 5 - features['studytime'] * 5 + features['failures'] * 5 - features['famrel'] * 5 + 
+                           (features['Dalc'] * 4) * 4 + (features['Walc'] * 4) * 3 + (features['health'] * 4) * 3 + 
+                           (features['absences_rate'] * 4) * 2 - (features['existant_support'] * 4)) / 17) / 2
 
 # Create 'complexity' based on 'complexity_score' with minimum value of 0
 # This is necessary as the complexity score equation contains both substructions and additions 
@@ -67,8 +68,8 @@ students_below_10 = features[features['FinalGrade'] < 10]
 percentage_below_10 = (len(students_below_10) / len(features)) * 100
 
 # Calculate percentage of students with complexity > 2
-students_above_complexity_2 = features[features['complexity'] > 2]
-percentage_complexity_above_2 = (len(students_above_complexity_2) / len(features)) * 100
+students_above_complexity_4 = features[features['complexity'] > 4]
+percentage_complexity_above_4 = (len(students_above_complexity_4) / len(features)) * 100
 
 # Create The Mouse Hover Text
 features['hover_text'] = "Student ID: " + features['StudentID'].astype(str)
@@ -97,7 +98,7 @@ st.plotly_chart(fig)
 
 # Display the summary values below the plot
 st.subheader('Summary Statistics')
-st.write(f"**Mean Final Grade :** {final_grade_mean:.2f}")
+st.write(f"**Mean Final Grade:** {final_grade_mean:.2f}")
 st.write(f"**Percentage of Students with Final Grades Below 10:** {percentage_below_10:.2f}%")
 st.write(f"**Mean Improvability Score:** {complexity_mean:.2f}")
-st.write(f"**Percentage of Students with Improvability Scores Above 2:** {percentage_complexity_above_2:.2f}%")
+st.write(f"**Percentage of Students with Improvability Scores Above 4:** {percentage_complexity_above_4:.2f}%")
